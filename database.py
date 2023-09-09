@@ -112,6 +112,22 @@ class Database():
 	def add_source_document(self, filename, content):
 		self.source_document_reference.child(filename).set(content)
 
+	def get_source_document(self, filename):
+		file_reference = self.source_document_reference.child(filename)
+		source_document_text = ""
+		if not file_reference is None:
+			source_document_text = file_reference.get()
+		else:
+			source_document_text = f"ERROR: File {filename} does not exist."
+		return source_document_text
+	
+	def get_all_source_documents(self):
+		files_reference = self.source_document_reference.get()
+		source_documents = []
+		if not files_reference is None:
+			source_documents = [key for key in files_reference]
+		return source_documents
+
 
 	def get_all_messages(self, chat_id):
 		# List of previous messages
@@ -123,7 +139,7 @@ class Database():
 				previous_messages_list = [obj["body"] for obj in previous_messages_object_list]
 		return previous_messages_list
 
-		
+	
 
 
 		

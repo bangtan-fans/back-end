@@ -38,6 +38,7 @@ def add_source_document():
     # Assume it's in the format of "filename": "name", "content": "text"
     
     database.add_source_document(filename=message_body["filename"], content=message_body["content"])
+    return "Success"
 
     
 
@@ -53,9 +54,21 @@ def submit_prompt():
     response = openAIAPI.get_completion(chat_id, prompt)
     return response
 
+@app.route('/get_source_document/<source_document_name>', methods=['GET'])
+def get_source_document(source_document_name):
+    """This takes a source document name and returns the content related to that that name.
+    """
 
-def select_source_document():
-    pass 
+    #get our source document from our database by using source_document_name
+    return database.get_source_document(filename=source_document_name)
+
+@app.route('/get_all_source_documents', methods = ['GET'])
+def get_all_source_documents():
+    
+    #get a list of all the source document names 
+    list_source_documents = database.get_all_source_documents()
+
+    return jsonify(list_source_documents)
 
 
 if __name__ == "__main__":
