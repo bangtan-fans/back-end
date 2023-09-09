@@ -75,9 +75,9 @@ def delete_chat_id(chat_id):
     result = database.delete_chat(chat_id)
     return jsonify(result)
 
-@app.route('/delete_source_document/<chat_id>', methods = ['GET'])
-def delete_source_document(chat_id):
-    result = database.delete_source_document(chat_id)
+@app.route('/delete_source_document/<source_document_name>', methods = ['GET'])
+def delete_source_document(source_document_name):
+    result = database.delete_source_document(source_document_name)
     return jsonify(result)
 
 if __name__ == "__main__":
