@@ -12,6 +12,6 @@ payload_1 = {"chat_id": chat_id,
 payload_2 = {"chat_id": chat_id,
            "prompt": "Now, concatenate those words."}
 
-x = requests.post(url, json = payload_1)
+x = requests.post(url_cloudrun, json = payload_1)
 
 y = requests.post(url, json = payload_2)

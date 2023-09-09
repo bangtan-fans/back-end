@@ -33,9 +33,7 @@ def new_chat():
     return jsonify({"new_chat_id": new_chat_id})
 
 
-
-
-@app.route('/', methods=['POST'])
+@app.route('/submit_prompt', methods=['POST'])
 def submit_prompt():
     message_body = json.loads(request.data)
     chat_id = message_body["chat_id"]
