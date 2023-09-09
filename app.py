@@ -32,6 +32,14 @@ def new_chat():
     database.add_new_chat(chat_id = new_chat_id)
     return jsonify({"new_chat_id": new_chat_id})
 
+@app.route('/add_source_document', methods = ['POST'])
+def add_source_document():
+    message_body = json.loads(request.data)
+    # Assume it's in the format of "filename": "name", "content": "text"
+    
+    database.add_source_document(filename=message_body["filename"], content=message_body["content"])
+
+    
 
 @app.route('/submit_prompt', methods=['POST'])
 def submit_prompt():
@@ -39,8 +47,15 @@ def submit_prompt():
     chat_id = message_body["chat_id"]
     prompt = message_body["prompt"]
 
+    #check if source docs have been selected for this chat 
+    source_docs_list = message_body["source_docs"]
+
     response = openAIAPI.get_completion(chat_id, prompt)
     return response
+
+
+def select_source_document():
+    pass 
 
 
 if __name__ == "__main__":

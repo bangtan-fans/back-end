@@ -2,6 +2,7 @@ import requests
 import firebase_admin
 from firebase_admin import credentials, db
 import os
+from dotenv import load_dotenv
 
 
 # cred = credentials.Certificate('llmnotebook-macathon1-firebase-adminsdk-1137j-c4ecc4a9ef.json')
@@ -41,13 +42,14 @@ import os
 		
 class Database():
 	def __init__(self):
-
+		load_dotenv()
 		cred = credentials.Certificate(os.environ.get("FIREBASE_SECRET_DIR"))
 		firebase_admin.initialize_app(cred, {'databaseURL': 'https://llmnotebook-macathon1-default-rtdb.asia-southeast1.firebasedatabase.app/'})
 		
 		# All References / Directories
 		self.llm_conversation_reference = db.reference('LLMConversation/')
 		self.chat_metadata = db.reference("ChatMetadata/")
+		self.source_document_reference = db.reference('SourceDocuments/')
 			
 	def get_previous_chat(self, chat_id):
 
@@ -107,6 +109,10 @@ class Database():
 				})
 		return chat_ids_and_names
 
+	def add_source_document(self, filename, content):
+		self.source_document_reference.child(filename).set(content)
+
+
 	def get_all_messages(self, chat_id):
 		# List of previous messages
 		chat_id_reference = self.llm_conversation_reference.child(chat_id)
@@ -141,7 +147,15 @@ class Database():
 
 
 '''
-	
+
+SourceDocuments = {
+	"doc_name": "text",
+	"doc2_name": "text"
+}	
+
+
+
+
 LLMConversation = {
 	"chatid1": {
 		"chat_history": 	[
@@ -164,6 +178,13 @@ LLMConversation = {
 					
 		]
 
+	},
+	...
+	,
+}
+
+
+###### This is for central docs implementation later on!!!! ######
 		"source_docs":{
 			"doc_name": {
 				"doc_type": 1,
@@ -173,11 +194,6 @@ LLMConversation = {
 			
 			}
 		}
-
-	},
-	...
-	,
-}
 
 
 
