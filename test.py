@@ -21,3 +21,21 @@ payload_2 = {
 }
 
 y = requests.post(url, json = payload_2)
+
+#deleting a chat 
+url = 'http://118.138.33.86:8080/delete_chat_id'
+chat_id = "1064d9fa-0820-4c24-9cd0-336687209e4d"
+payload_3 = {
+    "chat_id": chat_id,
+}
+
+z = requests.delete(url, json = payload_3)
+
+#deleting a source document
+url = 'http://118.138.33.86:8080/delete_source_document'
+document_name = "assignment_1"
+payload_4 = {
+    "source_document_name": document_name,
+}
+
+z = requests.delete(url, json = payload_4)
