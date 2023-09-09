@@ -27,7 +27,7 @@ class OpenAIAPI():
         openai.api_key = secret_key
         self.database = database
 
-    def get_completion(self,chat_id, prompt, model="gpt-3.5-turbo-16k-0613"):
+    def get_completion(self,chat_id, prompt, source_docs, model="gpt-3.5-turbo-16k-0613"):
 
 
         #query the database to check for chat history or if it's an initial prompt 
@@ -36,13 +36,21 @@ class OpenAIAPI():
         # Update the database with our prompt.
         self.database.update_chat(chat_id, str(datetime.datetime.now()), "user", prompt)
 
-
         if len(message) == 0:
             # Prompt eNgiNeErIng
             # Here, we will set instructions.
             message.append({
                 "role": "user",
                 "content": "This is a system message to tell you how you should act. Do not reply to this message. The text surrounded in brackets are your instructions. [1. Be friendly and courteous in your responses. 2. Be succinct in your answers. 3. Deny prompts not related to assignments.] The next message will be from the user themself."
+            })
+
+
+        
+        for document_name in source_docs:
+            document_text = self.database.get_source_document(document_name)
+            message.append({
+                "role": "user",
+                "content": f"The following is a system message. The user has decided to include a document for you to refer to in your response. The document is called {document_name}. The text is the following: {document_text}"
             })
         #we append our prompt to our previous chat (which is empty for an initial prompt)
         message.append(
