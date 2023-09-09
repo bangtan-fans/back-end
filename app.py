@@ -70,12 +70,12 @@ def get_all_source_documents():
 
     return jsonify(list_source_documents)
 
-@app.route('/delete_chat_id/<chat_id>', methods = ['GET'])
+@app.route('/delete_chat_id/<chat_id>', methods = ['DELETE'])
 def delete_chat_id(chat_id):
     result = database.delete_chat(chat_id)
     return jsonify(result)
 
-@app.route('/delete_source_document/<source_document_name>', methods = ['GET'])
+@app.route('/delete_source_document/<source_document_name>', methods = ['DELETE'])
 def delete_source_document(source_document_name):
     result = database.delete_source_document(source_document_name)
     return jsonify(result)
