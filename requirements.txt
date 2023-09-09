@@ -3,3 +3,4 @@ gunicorn==20.1.0
 python-dotenv
 openai
 requests
+firebase_admin
