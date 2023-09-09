@@ -115,7 +115,6 @@ class Database():
 				previous_messages_list = [obj["body"] for obj in previous_messages_object_list]
 		return previous_messages_list
 
-	def upload_source_document(self)
 		
 
 
