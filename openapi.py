@@ -36,9 +36,6 @@ class OpenAIAPI():
         # Update the database with our prompt.
         self.database.update_chat(chat_id, str(datetime.datetime.now()), "user", prompt)
 
-        system_message = ""
-        prompt =    
-
         #we append our prompt to our previous chat (which is empty for an initial prompt)
         message.append(
             {

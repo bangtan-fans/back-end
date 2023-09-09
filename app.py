@@ -18,10 +18,12 @@ def generate_unique_id():
     return str(uuid.uuid4())
 
 @app.route('/get_all_ids', methods=['GET'])
-def return_all_ids():
-    
-    pass
+def get_all_ids():
+    return jsonify(database.get_all_ids())
 
+@app.route('/get_all_messages/<chat_id>')
+def get_all_messages(chat_id):
+    return jsonify(database.get_all_messages(chat_id))
 
 @app.route('/new_chat', methods = ['GET'])
 def new_chat():

@@ -56,9 +56,10 @@ class Database():
 		previous_chat_list = []
 		reference = self.llm_conversation_reference.child(chat_id).get()
 
-		if not (reference.get("chat_history", None) is None):
+		if not reference.get("chat_history", None) is None:
 			for message in reference["chat_history"]:
 				previous_chat_list.append(message["body"])
+		
 
 		return previous_chat_list
 	
@@ -66,7 +67,7 @@ class Database():
 		chat_history_ref = self.llm_conversation_reference.child(chat_id).child("chat_history")
 		chat  = []
 
-		if not (chat_history_ref.get() is None):
+		if not chat_history_ref.get() is None:
 			chat = chat_history_ref.get()
 
 		chat.append({
@@ -94,9 +95,29 @@ class Database():
 
 	def get_all_ids(self):
 		'''
-		Returns all ChatIDs.
+		Returns all ChatIDs AND Names.
 		'''
-		
+		chat_ids_and_names = []
+		chat_metadata = self.chat_metadata.get()
+		if not self.chat_metadata.get() is None:
+			for key in chat_metadata:
+				chat_ids_and_names.append({
+					"id": key,
+					"name": chat_metadata[key]
+				})
+		return chat_ids_and_names
+
+	def get_all_messages(self, chat_id):
+		# List of previous messages
+		chat_id_reference = self.llm_conversation_reference.child(chat_id)
+		previous_messages_list = []
+		if not chat_id_reference.child("chat_history") is None:
+			previous_messages_object_list = chat_id_reference.child("chat_history").get()
+			if not previous_messages_object_list is None:
+				previous_messages_list = [obj["body"] for obj in previous_messages_object_list]
+		return previous_messages_list
+
+	def upload_source_document(self)
 		
 
 
