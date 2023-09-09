@@ -2,10 +2,10 @@ import requests
 
 url = 'http://127.0.0.1:5000/'
 
-chat_id = "e55e7645-7441-48ed-902a-5b8bb7a138c4"
+chat_id = "dce507a8-3eda-45b1-a974-fb8636d9dd16"
 
 payload_1 = {"chat_id": chat_id,
-           "prompt": "Give me three words relating to academica."}
+           "prompt": "Give me three words relating to flowers."}
 
 payload_2 = {"chat_id": chat_id,
            "prompt": "Now, concatenate those words."}

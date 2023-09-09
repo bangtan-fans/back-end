@@ -42,7 +42,7 @@ class OpenAIAPI():
             # Here, we will set instructions.
             message.append({
                 "role": "user",
-                "content": "This is a system message to tell you how you should act. Do not reply to this message. The text surrounded in brackets are your instructions. [1. Always start your response with a \"yes sir\"] The next message is from the user themself."
+                "content": "This is a system message to tell you how you should act. Do not reply to this message. The text surrounded in brackets are your instructions. [] The next message will be from the user themself."
             })
         #we append our prompt to our previous chat (which is empty for an initial prompt)
         message.append(

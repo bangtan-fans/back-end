@@ -1,6 +1,7 @@
 import requests
 import firebase_admin
 from firebase_admin import credentials, db
+import os
 
 
 # cred = credentials.Certificate('llmnotebook-macathon1-firebase-adminsdk-1137j-c4ecc4a9ef.json')
@@ -40,7 +41,8 @@ from firebase_admin import credentials, db
 		
 class Database():
 	def __init__(self):
-		cred = credentials.Certificate('llmnotebook-macathon1-firebase-adminsdk-1137j-c4ecc4a9ef.json')
+
+		cred = credentials.Certificate(os.environ.get("FIREBASE_SECRET_DIR"))
 		firebase_admin.initialize_app(cred, {'databaseURL': 'https://llmnotebook-macathon1-default-rtdb.asia-southeast1.firebasedatabase.app/'})
 		
 		# All References / Directories
