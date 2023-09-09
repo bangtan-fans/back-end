@@ -42,8 +42,7 @@ def submit_prompt():
     prompt = message_body["prompt"]
 
     response = openAIAPI.get_completion(chat_id, prompt)
-    print(response)
-    return "Prompt received."
+    return response
 
 
 if __name__ == "__main__":
