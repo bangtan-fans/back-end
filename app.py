@@ -5,6 +5,7 @@ from flask import Flask, request, jsonify
 from openapi import OpenAIAPI
 from database import Database
 import uuid
+import os
 
 
 app = Flask(__name__)
@@ -45,4 +46,5 @@ def submit_prompt():
     return "Prompt received."
 
 
-app.run(debug=True)
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
