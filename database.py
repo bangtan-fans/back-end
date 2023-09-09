@@ -139,7 +139,21 @@ class Database():
 				previous_messages_list = [obj["body"] for obj in previous_messages_object_list]
 		return previous_messages_list
 
-	
+	def delete_chat(self, chat_id):
+		chat_id_reference = self.llm_conversation_reference.child(chat_id)
+		success = False
+		if not chat_id_reference.get() is None:
+			chat_id_reference.delete()
+			success = True
+		return success
+
+	def delete_source_document(self, document_name):
+		document_id_reference = self.source_document_reference.child(document_name)
+		success = False
+		if not document_id_reference.get() is None:
+			document_id_reference.delete()
+			success = True
+		return success
 	
 
 
