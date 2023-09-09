@@ -5,8 +5,8 @@ import os
 from dotenv import load_dotenv
 
 
-# cred = credentials.Certificate('llmnotebook-macathon1-firebase-adminsdk-1137j-c4ecc4a9ef.json')
-# firebase_admin.initialize_app(cred, {'databaseURL': 'https://llmnotebook-macathon1-default-rtdb.asia-southeast1.firebasedatabase.app/'})
+	# cred = credentials.Certificate('llmnotebook-macathon1-firebase-adminsdk-1137j-c4ecc4a9ef.json')
+	# firebase_admin.initialize_app(cred, {'databaseURL': 'https://llmnotebook-macathon1-default-rtdb.asia-southeast1.firebasedatabase.app/'})
 # ref = db.reference('Books/')        
 # ref.set({
 # 	"Book1":
@@ -47,15 +47,19 @@ class Database():
 		firebase_admin.initialize_app(cred, {'databaseURL': 'https://llmnotebook-macathon1-default-rtdb.asia-southeast1.firebasedatabase.app/'})
 		
 		# All References / Directories
+		self.reinitialise_reference()
+			
+	def reinitialise_reference(self):
+		# All References / Directories
 		self.llm_conversation_reference = db.reference('LLMConversation/')
 		self.chat_metadata = db.reference("ChatMetadata/")
-		self.source_document_reference = db.reference('SourceDocuments/')
-			
+		self.source_document_reference = db.reference('SourceDocuments/')	
+
 	def get_previous_chat(self, chat_id):
 
         #if chat_history doesn't exist, this is an initial prompt, so this would return an empty list and provide no context
         #elsif chat_history exists, this is an existing conversation, so load chat history and query openai API with prompt + chat history 
-
+		self.reinitialise_reference()
 
 		previous_chat_list = []
 		reference = self.llm_conversation_reference.child(chat_id).get()
@@ -66,6 +70,7 @@ class Database():
 		return previous_chat_list
 	
 	def update_chat(self,  chat_id,timestamp, user, content):
+		self.reinitialise_reference()
 		chat_history_ref = self.llm_conversation_reference.child(chat_id).child("chat_history")
 		chat  = []
 
@@ -83,10 +88,12 @@ class Database():
 
 
 	def does_chat_id_exist(self, chat_id):
+		self.reinitialise_reference()
 		return not (self.llm_conversation_reference.child(chat_id).get() is None)
 
 	def add_new_chat(self, chat_id):
 		#this pushes an empty json object to set up a structure for a newchat
+		self.reinitialise_reference()
 		self.llm_conversation_reference.child(chat_id).set({
 			"chat_id": chat_id,
 			"chat_history": None,
@@ -99,6 +106,7 @@ class Database():
 		'''
 		Returns all ChatIDs AND Names.
 		'''
+		self.reinitialise_reference()
 		chat_ids_and_names = []
 		chat_metadata = self.chat_metadata.get()
 		if not self.chat_metadata.get() is None:
@@ -110,9 +118,11 @@ class Database():
 		return chat_ids_and_names
 
 	def add_source_document(self, filename, content):
+		self.reinitialise_reference()
 		self.source_document_reference.child(filename).set(content)
 
 	def get_source_document(self, filename):
+		self.reinitialise_reference()
 		file_reference = self.source_document_reference.child(filename)
 		source_document_text = ""
 		if not file_reference is None:
@@ -122,6 +132,7 @@ class Database():
 		return source_document_text
 	
 	def get_all_source_documents(self):
+		self.reinitialise_reference()
 		files_reference = self.source_document_reference.get()
 		source_documents = []
 		if not files_reference is None:
@@ -131,6 +142,7 @@ class Database():
 
 	def get_all_messages(self, chat_id):
 		# List of previous messages
+		self.reinitialise_reference()
 		chat_id_reference = self.llm_conversation_reference.child(chat_id)
 		previous_messages_list = []
 		if not chat_id_reference.child("chat_history") is None:
@@ -140,14 +152,21 @@ class Database():
 		return previous_messages_list
 
 	def delete_chat(self, chat_id):
+		self.reinitialise_reference()
 		chat_id_reference = self.llm_conversation_reference.child(chat_id)
+		chat_id_reference_chat_metadata = self.chat_metadata.child(chat_id)
 		success = False
 		if not chat_id_reference.get() is None:
 			chat_id_reference.delete()
 			success = True
+
+		if not chat_id_reference_chat_metadata is None:
+			chat_id_reference_chat_metadata.delete()
+			success = True
 		return success
 
 	def delete_source_document(self, document_name):
+		self.reinitialise_reference()
 		document_id_reference = self.source_document_reference.child(document_name)
 		success = False
 		if not document_id_reference.get() is None:
