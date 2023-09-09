@@ -27,6 +27,25 @@ class OpenAIAPI():
         openai.api_key = secret_key
         self.database = database
 
+    def append_source_docs_to_message(self, message, source_docs):
+        for document_name in source_docs:
+            document_text = self.database.get_source_document(document_name)
+            message.append({
+                "role": "user",
+                "content": f"The following is a system message. The user has decided to include a source document for you to refer to in your response. The source document is called {document_name}. The text is the following: {document_text}"
+            })
+        return message
+
+    def append_content_doc_to_message(self, message, content_docs):
+        for document_name in content_docs:
+            document_text = "GET CONTENT DOCUMENT"
+            message.append({
+                "role": "user",
+                "content": f"The following is a system message. The content document the user is working on will be given further on, delimited by & characters. You may refer to the content document as needed to provide relevant suggestions and enhancements. If there are source documents in any previous message, you may refer to those as part of your response. This is the content document: & {document_text} %" 
+            })
+        return message
+
+
     def get_completion(self,chat_id, prompt, source_docs, model="gpt-3.5-turbo-16k-0613"):
 
 
@@ -46,12 +65,7 @@ class OpenAIAPI():
 
 
         
-        for document_name in source_docs:
-            document_text = self.database.get_source_document(document_name)
-            message.append({
-                "role": "user",
-                "content": f"The following is a system message. The user has decided to include a document for you to refer to in your response. The document is called {document_name}. The text is the following: {document_text}"
-            })
+
         #we append our prompt to our previous chat (which is empty for an initial prompt)
         message.append(
             {
