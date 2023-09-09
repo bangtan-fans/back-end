@@ -70,19 +70,13 @@ def get_all_source_documents():
 
     return jsonify(list_source_documents)
 
-@app.route('/delete_chat_id', methods = ['DELETE'])
-def delete_chat_id():
-    message_body = json.loads(request.data)
-    chat_id = message_body["chat_id"]
-
+@app.route('/delete_chat_id/<chat_id>', methods = ['GET'])
+def delete_chat_id(chat_id):
     result = database.delete_chat(chat_id)
     return jsonify(result)
 
-@app.route('/delete_source_document', methods = ['DELETE'])
-def delete_source_document():
-    message_body = json.loads(request.data)
-    chat_id = message_body["source_document_name"]
-
+@app.route('/delete_source_document/<chat_id>', methods = ['GET'])
+def delete_source_document(chat_id):
     result = database.delete_source_document(chat_id)
     return jsonify(result)
 
