@@ -59,8 +59,6 @@ class Database():
 		if not reference.get("chat_history", None) is None:
 			for message in reference["chat_history"]:
 				previous_chat_list.append(message["body"])
-		
-
 		return previous_chat_list
 	
 	def update_chat(self,  chat_id,timestamp, user, content):
