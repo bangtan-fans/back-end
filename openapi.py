@@ -32,7 +32,7 @@ class OpenAIAPI():
             document_text = self.database.get_source_document(document_name)
             message.append({
                 "role": "user",
-                "content": f"The following is a system message. The user has decided to include a source document for you to refer to in your response. The source document is called {document_name}. The text is the following: {document_text}"
+                "content": f"The following is a system message. The user has decided to include a source document for you to refer to in your response. The source document is called {document_name}. The text is the following : {document_text}"
             })
         return message
 
@@ -41,7 +41,7 @@ class OpenAIAPI():
             document_text = "GET CONTENT DOCUMENT"
             message.append({
                 "role": "user",
-                "content": f"The following is a system message. The content document the user is working on will be given further on, delimited by & characters. You may refer to the content document as needed to provide relevant suggestions and enhancements. If there are source documents in any previous message, you may refer to those as part of your response. This is the content document: & {document_text} %" 
+                "content": f"The following is a system message. The content document the user is working on will be given further on, delimited by & characters. You may refer to the content document as needed to provide relevant suggestions and enhancements. If there are source documents in any previous message, you may refer to those as part of your response. This is the content document : & {document_text} &" 
             })
         return message
 
@@ -60,7 +60,7 @@ class OpenAIAPI():
             # Here, we will set instructions.
             message.append({
                 "role": "user",
-                "content": "This is a system message to tell you how you should act. Do not reply to this message. The text surrounded in brackets are your instructions. [1. Be friendly and courteous in your responses. 2. Be succinct in your answers. 3. Deny prompts not related to assignments.] The next message will be from the user themself."
+                "content": "This is a system message to tell you how you should act. Do not reply to this message. The text surrounded in brackets are your instructions. [1. Be friendly and courteous in your responses. 2. Keep your answers short and concise. 3. Deny prompts not related to assignments. 4.]"
             })
 
 
@@ -70,7 +70,7 @@ class OpenAIAPI():
         message.append(
             {
                 "role": "user",
-                "content": prompt
+                "content": "This is the user's message : " + prompt
             }
         )
     

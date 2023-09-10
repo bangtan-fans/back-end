@@ -1,0 +1,315 @@
+3/27/22, 12:34 PM ETC1010: Introduction to Data Analysis
+https://dcd7214be7784149b9e30f939065f341.app.rstudio.cloud/file_show?path=%2Fcloud%2Fproject%2FETC1010_Assignment1.html 1/10
+ETC1010: Introduction to Data
+Analysis
+Racharit Ramnarong
+Instructions to Students
+This is an individual assignment and you must work on it on your own. Collaboration on the
+assignment constitute collusion. For more on collusion and misconduct please see this webpage.
+(https://connect.monash.edu/s/article/FAQ-2144)
+This assignment is designed to simulate a scenario in which you are taking over someone’s existing work and
+continuing with it to draw some further insights. Therefore you are given an R project inside the Rstudio Cloud
+Assignment space for ETC1010-5510. You can access that space in this link
+(https://rstudio.cloud/spaces/225853/join?access_code=jlyrobmtvVdomco7rv9jvCvCyfcBfRgR_nDhD_V1).
+This is a real world data set published by the SIPRI Military Expenditure Database
+(https://www.sipri.org/databases/milex). Specifically, the data file called “military-expenditure.csv” is located in
+your data folder inside the RStudio project, and it will be used for this assignment. This file contains the yearly
+military expenditure for a number of countries, the world and for different continents too.
+You have just joined a consulting company as a data analyst. To get you started on a new project that tries to
+understand the differences in military expenditure across different countries, you are performing a quick
+summary of the data while answering a number questions that the chief business analytics leader has asked
+you to do. This is not a formal report, but rather something you are giving to your manager that describes the
+data with some interesting insights.
+Please make sure you read the hints throughout the assignment to help guide you on the tasks.
+The points allocated for each of the elements in the assignment are marked in the questions and next to the
+code for those questions where a code scaffolding is provided.
+Marking + Grades
+This assignment will be worth 10% of your total grade. Due on: Monday 28 March 4:30pm (Melbourne time).
+Late submissions will not be accepted.
+For this assignment, you will need to upload the following into Moodle:
+The rendered html file saved as a pdf. The assignment will be only marked if the pdf is uploaded in
+Moodle. The submitted assignment pdf file must have all the code and output visible.
+To complete the assignment, you will need to fill in the blanks with appropriate R code for some
+questions. These sections are marked with ___ . For other questions, you will need to write the entire R
+code chunk.
+At a minimum, your assignment should be able to be “knitted” using the Knit button for your
+Rmarkdown document so that you can produce a html file that you will save as pdf file and upload it into
+Moodle. You will be reminded about how to save the rendered html file into pdf in the tutorials of Week 3.
+If you want to look at what the assignment looks like as you progress , remember that you can set the R chunk
+options to eval = FALSE like so to ensure that you can knit the file:
+3/27/22, 12:34 PM ETC1010: Introduction to Data Analysis
+https://dcd7214be7784149b9e30f939065f341.app.rstudio.cloud/file_show?path=%2Fcloud%2Fproject%2FETC1010_Assignment1.html 2/10
+```{r this-chunk-will-not-run, eval = FALSE} `r''`
+a <- 1 + 2
+```
+If you use eval = FALSE or echo = FALSE , please remember to ensure that you have set to eval = TRUE
+and echo = TRUE when you submit the assignment, to ensure all your R codes run.
+IMPORTANT: You must use R code to answer all the questions in the report.
+Due Date
+This assignment is due in by close of business (4:30pm) on Monday, 28 March 2022. You will submit the
+knitted html file saved as a pdf via Moodle. Please make sure you add your name on the YAML part of the
+Rmd file before you knit it and save it as pdf.
+How to find help from R functions?
+Remember, you can look up the help file for functions by typing: ?function_name . For example, ?mean .
+Load all the libraries that you need here
+library(tidyverse)
+Reading and preparing data
+expenditure <- read_csv("Data/military-expenditure.csv")
+Question 1: Display the last 4 rows of the data set
+(1pt). Hint: Check ?head in your R console
+tail(expenditure, 4)
+## # A tibble: 4 × 4
+## Entity Code Year military_expenditure
+## <chr> <chr> <dbl> <dbl>
+## 1 Zimbabwe ZWE 2016 1046329810
+## 2 Zimbabwe ZWE 2017 986095198
+## 3 Zimbabwe ZWE 2018 1100563838
+## 4 Zimbabwe ZWE 2019 546939000
+Question 2: How many observations and variables
+does the data set expenditure have (1pt)? Use
+inline code to complete the sentence below (2pts)
+dim(expenditure)
+3/27/22, 12:34 PM ETC1010: Introduction to Data Analysis
+https://dcd7214be7784149b9e30f939065f341.app.rstudio.cloud/file_show?path=%2Fcloud%2Fproject%2FETC1010_Assignment1.html 3/10
+## [1] 8278 4
+The number of observations is 8278 and the number of variables is 4.
+Question 3: What is the name of the 4th variable in
+this data set (2pts)? Use R commands to answer
+this question.
+names(expenditure)[4]
+## [1] "military_expenditure"
+Question 4: Using the expenditure data set,
+rename the variable of “Entity” to “Country” and
+save this new data frame in a data object called
+tab_aus (2pts). Display the first 4 rows
+corresponding to the country “Australia” for all the
+variables in tab_aus (1pt).
+tab_aus <- expenditure %>%
+ dplyr::rename("Country" = Entity) %>%
+ dplyr::filter("Country" == "Australia")
+tab_aus %>% head(4)
+## # A tibble: 0 × 4
+## # … with 4 variables: Country <chr>, Code <chr>, Year <dbl>,
+## # military_expenditure <dbl>
+Question 5: How many years are recorded in the
+expenditure data frame for “Australia” (2pts)?
+expenditure %>% dplyr::filter(Entity == "Australia") %>% dplyr::select(Year) %>% unique() %>%
+dplyr::count()
+## # A tibble: 1 × 1
+## n
+## <int>
+## 1 71
+The number of years recorded in the expenditure data frame for Australia is 71.
+3/27/22, 12:34 PM ETC1010: Introduction to Data Analysis
+https://dcd7214be7784149b9e30f939065f341.app.rstudio.cloud/file_show?path=%2Fcloud%2Fproject%2FETC1010_Assignment1.html 4/10
+Question 6: Using the data frame expenditure,
+rename the variable Entity to Country. Then select
+the observations corresponding to the following
+countries: Ukraine, Russia, World, Europe,
+Australia and United States and store this data in a
+new data object called data_tab (3pts). Print the
+first 4 rows of the data_tab data set (1pt). What is
+the dimension of the new data set data_tab? (2pts)
+data_tab <- expenditure %>%
+ dplyr::rename("Country" = Entity) %>% dplyr::filter(Country %in% c("Ukraine", "Russia",
+ "World", "Europe",
+ "Australia",
+"United States"))
+
+head(data_tab, 4)
+## # A tibble: 4 × 4
+## Country Code Year military_expenditure
+## <chr> <chr> <dbl> <dbl>
+## 1 Australia AUS 1950 2793226922
+## 2 Australia AUS 1951 4012038067
+## 3 Australia AUS 1952 5124027521
+## 4 Australia AUS 1953 5157550597
+dim(data_tab)
+## [1] 347 4
+The dimension of data_tab is 347 rows and 4 columns.
+Question 7: How many years are recorded for each
+of the countries in data_tab (1pt). Display the
+results using functions from the tidyverse package.
+Hint:This is equivalent to displying the number of
+observations for each of the countries.
+data_tab %>% dplyr::group_by(Country) %>% dplyr::count()
+3/27/22, 12:34 PM ETC1010: Introduction to Data Analysis
+https://dcd7214be7784149b9e30f939065f341.app.rstudio.cloud/file_show?path=%2Fcloud%2Fproject%2FETC1010_Assignment1.html 5/10
+## # A tibble: 6 × 2
+## # Groups: Country [6]
+## Country n
+## <chr> <int>
+## 1 Australia 71
+## 2 Europe 72
+## 3 Russia 32
+## 4 Ukraine 28
+## 5 United States 72
+## 6 World 72
+Question 8: What are the unique elements in the
+variable Country in the data object data_tab
+(Display the results using R code) (1pt)? How many
+are there (use an R command to count the number
+of elements) and complete the sentence below
+using inline R code (1pt).
+Remember that you can learn more about what these functions by typing:
+?unique or ?length into the R console.
+data_tab %>% dplyr::select(Country) %>% unique()
+## # A tibble: 6 × 1
+## Country
+## <chr>
+## 1 Australia
+## 2 Europe
+## 3 Russia
+## 4 Ukraine
+## 5 United States
+## 6 World
+data_tab %>% dplyr::select(Country) %>% unique() %>% dplyr::count()
+## # A tibble: 1 × 1
+## n
+## <int>
+## 1 6
+There are 6 different elements in the variable Country inside the data object called data_tab.
+3/27/22, 12:34 PM ETC1010: Introduction to Data Analysis
+https://dcd7214be7784149b9e30f939065f341.app.rstudio.cloud/file_show?path=%2Fcloud%2Fproject%2FETC1010_Assignment1.html 6/10
+Question 9: Using the data_tab data frame,
+calculate the total sum of the variable
+military_expenditure for each of the countries in the
+data set selecting only the years from 1994. Store
+the results in a new variable called Total. (2pts).
+Make sure you store the new data frame in a data
+object called Total_expenditure and display the
+results (#1pt). Hint: This new data object will need
+to have two columns.
+Total_expenditure <- data_tab %>% dplyr::filter(Year >= 1994) %>% dplyr::group_by(Country) %
+>% dplyr::summarise(Total = sum(military_expenditure))
+Total_expenditure
+## # A tibble: 6 × 2
+## Country Total
+## <chr> <dbl>
+## 1 Australia 5.06e11
+## 2 Europe 8.47e12
+## 3 Russia 1.21e12
+## 4 Ukraine 6.53e10
+## 5 United States 1.76e13
+## 6 World 4.00e13
+Question 10: What is the proportion of the
+Total_expenditure of each of the countries you
+stored in the object Total_expenditure (in question
+9) with respect of the world? To answer this
+question, please create a new variable called
+Percentage and store the new data frame under
+the data object Percen_expenditure. Display the
+resulting data frame (this data frame must contain
+the variables Country, Total and Percentage) (2pts)
+Hint: You can calculate the percentage by dividing
+the Total expenditure of each country by the total
+world expenditure and multiply by 100.
+3/27/22, 12:34 PM ETC1010: Introduction to Data Analysis
+https://dcd7214be7784149b9e30f939065f341.app.rstudio.cloud/file_show?path=%2Fcloud%2Fproject%2FETC1010_Assignment1.html 7/10
+Percen_expenditure <- Total_expenditure %>% dplyr::mutate(Percentage = Total * 100 / as.doubl
+e(Total_expenditure[6,2]))
+Percen_expenditure
+## # A tibble: 6 × 3
+## Country Total Percentage
+## <chr> <dbl> <dbl>
+## 1 Australia 5.06e11 1.26
+## 2 Europe 8.47e12 21.2
+## 3 Russia 1.21e12 3.02
+## 4 Ukraine 6.53e10 0.163
+## 5 United States 1.76e13 44.0
+## 6 World 4.00e13 100
+Question 11: If you look at the data
+Percen_expenditure, you will notice that the
+Country variable is coded as character. Transform
+the variable of Country into a factor variable (Hint:
+Check ?as.factor in your R console). Store the new
+data object that has the variable Country defined as
+a factor into the same data object called
+Percen_expenditure (1pt).Display all the rows of
+the data set (1pt)
+Percen_expenditure <- Percen_expenditure %>% dplyr::mutate(Country = as.factor(Country))
+Percen_expenditure
+## # A tibble: 6 × 3
+## Country Total Percentage
+## <fct> <dbl> <dbl>
+## 1 Australia 5.06e11 1.26
+## 2 Europe 8.47e12 21.2
+## 3 Russia 1.21e12 3.02
+## 4 Ukraine 6.53e10 0.163
+## 5 United States 1.76e13 44.0
+## 6 World 4.00e13 100
+Question 12: Use the data object
+Percen_expenditure, order the observations from
+larger to smaller according to the Percentage
+variable and display the results in a table (1pt).
+3/27/22, 12:34 PM ETC1010: Introduction to Data Analysis
+https://dcd7214be7784149b9e30f939065f341.app.rstudio.cloud/file_show?path=%2Fcloud%2Fproject%2FETC1010_Assignment1.html 8/10
+Without including the results for the World entries,
+which is the country with the largest expenditure
+(1pt)? And with the lowest (1pt)?
+or_percen_expenditure <- Percen_expenditure %>% dplyr::arrange(-Percentage)
+or_percen_expenditure
+## # A tibble: 6 × 3
+## Country Total Percentage
+## <fct> <dbl> <dbl>
+## 1 World 4.00e13 100
+## 2 United States 1.76e13 44.0
+## 3 Europe 8.47e12 21.2
+## 4 Russia 1.21e12 3.02
+## 5 Australia 5.06e11 1.26
+## 6 Ukraine 6.53e10 0.163
+# Country with Largest Expenditure
+or_percen_expenditure %>% dplyr::filter(Country != "World") %>% head(1)
+## # A tibble: 1 × 3
+## Country Total Percentage
+## <fct> <dbl> <dbl>
+## 1 United States 1.76e13 44.0
+#Country with Smallest Expenditure
+or_percen_expenditure %>% dplyr::filter(Country != "World") %>% tail(1)
+## # A tibble: 1 × 3
+## Country Total Percentage
+## <fct> <dbl> <dbl>
+## 1 Ukraine 65279584832 0.163
+The country with the highest expenditure is United States and the coutnry with the lowest expenditure is
+Ukraine.
+Question 13: In the data object Percen_expenditure
+extract all the observations for the second row
+(1pt).
+Using the same data object Percen_expenditure extract all the observations corresponding to the variable
+Total (1pt).
+Percen_expenditure[2,]
+3/27/22, 12:34 PM ETC1010: Introduction to Data Analysis
+https://dcd7214be7784149b9e30f939065f341.app.rstudio.cloud/file_show?path=%2Fcloud%2Fproject%2FETC1010_Assignment1.html 9/10
+## # A tibble: 1 × 3
+## Country Total Percentage
+## <fct> <dbl> <dbl>
+## 1 Europe 8467590049331 21.2
+Percen_expenditure %>% dplyr::select(Total)
+## # A tibble: 6 × 1
+## Total
+## <dbl>
+## 1 5.06e11
+## 2 8.47e12
+## 3 1.21e12
+## 4 6.53e10
+## 5 1.76e13
+## 6 4.00e13
+Question 14: Using the data_tab data object,
+display in a graph the trend in military_expenditure
+for the World (on the x-axis display the years and
+on the y-axis the military_expenditure values for the
+selected entries) (6pts). Hint: You first need to
+select the data that corresponds to the World
+entries and then create the plot. Trends are
+displayed with a line graph.
+data_world <- data_tab %>%
+ dplyr::filter(Country == "World")
+ggplot(data_world,
+ aes(x = Year, y = military_expenditure)) +
+ geom_line()
+3/27/22, 12:34 PM ETC1010: Introduction to Data Analysis
+https://dcd7214be7784149b9e30f939065f341.app.rstudio.cloud/file_show?path=%2Fcloud%2Fproject%2FETC1010_Assignment1.html 10/10
+Question 15: In one sentence, what do you observe
+from the figure in Question 14 (1pt)?
+Even though there are cycles with the increase and decrease of military expenditure in the world, overall, the
+world’s military expenditure is increasing as the years go by.
