@@ -32,15 +32,18 @@ def new_chat():
     database.add_new_chat(chat_id = new_chat_id)
     return jsonify({"new_chat_id": new_chat_id})
 
-@app.route('/add_source_document', methods = ['POST'])
-def add_source_document():
+@app.route('/update_document', methods = ['POST'])
+def update_document():
     message_body = json.loads(request.data)
-    # Assume it's in the format of "filename": "name", "content": "text"
-    
-    database.add_source_document(filename=message_body["filename"], content=message_body["content"])
-    return "Success"
+    # In production, refer to these with IDs instead.
+    filename = message_body["filename"]
+    content = message_body["content"]
 
-    
+    database.update_document(filename=filename, content=content)
+
+
+
+
 
 @app.route('/submit_prompt', methods=['POST'])
 def submit_prompt():
@@ -49,36 +52,36 @@ def submit_prompt():
     prompt = message_body["prompt"]
 
     #check if source docs have been selected for this chat 
-    source_docs_list = message_body["source_docs"]
+    documents_list = message_body["documents_list"]
 
-    print(message_body)
-    response = openAIAPI.get_completion(chat_id=chat_id, prompt=prompt, source_docs = source_docs_list)
+    response = openAIAPI.get_completion(chat_id=chat_id, prompt=prompt, documents_list = documents_list)
     return response
 
-@app.route('/get_source_document/<source_document_name>', methods=['GET'])
-def get_source_document(source_document_name):
-    """This takes a source document name and returns the content related to that that name.
+# Documents
+
+@app.route('/add_document', methods = ['POST'])
+def add_document():
+    message_body = json.loads(request.data)
+    # Assume it's in the format of "filename": "name", "content": "text"
+    database.add_document(filename=message_body["filename"], content=message_body["content"], doc_type=message_body["doc_type"])
+    return "Success"
+
+@app.route('/get_document/<document_name>', methods=['GET'])
+def get_document(document_name):
+    """This takes a document name and returns the object stored for that document.
     """
 
     #get our source document from our database by using source_document_name
-    return database.get_source_document(filename=source_document_name)
+    return database.get_document(filename=document_name)
 
-@app.route('/get_all_source_documents', methods = ['GET'])
-def get_all_source_documents():
-    
-    #get a list of all the source document names 
-    list_source_documents = database.get_all_source_documents()
+@app.route('/get_all_documents', methods = ['GET'])
+def get_all_documents():
+    return jsonify(database.get_all_documents())
 
-    return jsonify(list_source_documents)
 
-@app.route('/delete_chat_id/<chat_id>', methods = ['DELETE'])
-def delete_chat_id(chat_id):
-    result = database.delete_chat(chat_id)
-    return jsonify(result)
-
-@app.route('/delete_source_document/<source_document_name>', methods = ['DELETE'])
-def delete_source_document(source_document_name):
-    result = database.delete_source_document(source_document_name)
+@app.route('/delete_document/<document_name>', methods = ['DELETE'])
+def delete_document(document_name):
+    result = database.delete_document(document_name)
     return jsonify(result)
 
 if __name__ == "__main__":

@@ -53,7 +53,7 @@ class Database():
 		# All References / Directories
 		self.llm_conversation_reference = db.reference('LLMConversation/')
 		self.chat_metadata = db.reference("ChatMetadata/")
-		self.source_document_reference = db.reference('SourceDocuments/')	
+		self.document_reference = db.reference('Documents/')	
 
 	def get_previous_chat(self, chat_id):
 
@@ -117,13 +117,16 @@ class Database():
 				})
 		return chat_ids_and_names
 
-	def add_source_document(self, filename, content):
-		self.reinitialise_reference()
-		self.source_document_reference.child(filename).set(content)
+	def add_document(self, filename, content, doc_type):
+		document_object = {
+			"doc_type": doc_type,
+			"content": content,
+			"filename": filename
+		}
+		self.document_reference.child(filename).set(document_object)
 
-	def get_source_document(self, filename):
-		self.reinitialise_reference()
-		file_reference = self.source_document_reference.child(filename)
+	def get_document(self, filename):
+		file_reference = self.document_reference.child(filename)
 		source_document_text = ""
 		if not file_reference is None:
 			source_document_text = file_reference.get()
@@ -131,18 +134,26 @@ class Database():
 			source_document_text = f"ERROR: File {filename} does not exist."
 		return source_document_text
 	
-	def get_all_source_documents(self):
-		self.reinitialise_reference()
-		files_reference = self.source_document_reference.get()
+	def get_all_documents(self):
+		files_reference = self.document_reference.get()
 		source_documents = []
 		if not files_reference is None:
-			source_documents = [key for key in files_reference]
+			for key in files_reference:
+				source_documents.append(files_reference[key])
 		return source_documents
+	
+	def update_document(self, filename, content):
+		files_reference = self.document_reference.child(filename)
+		files_object = files_reference.get()
+		if not files_object is None:
+			pass
+
+
+
 
 
 	def get_all_messages(self, chat_id):
 		# List of previous messages
-		self.reinitialise_reference()
 		chat_id_reference = self.llm_conversation_reference.child(chat_id)
 		previous_messages_list = []
 		if not chat_id_reference.child("chat_history") is None:
@@ -165,20 +176,25 @@ class Database():
 			success = True
 		return success
 
-	def delete_source_document(self, document_name):
+	def delete_document(self, document_name):
 		self.reinitialise_reference()
-		document_id_reference = self.source_document_reference.child(document_name)
+		document_id_reference = self.document_reference.child(document_name)
 		success = False
 		if not document_id_reference.get() is None:
 			document_id_reference.delete()
 			success = True
 		return success
 	
-
-
+	def check_document_type(self, document_name):
+		document_object = self.document_reference.child(document_name).get()
+		document_type = ""
+		if not document_object is None:
+			document_type = document_object.get("doc_type")
+		else:
+			document_type = f"ERROR: File {document_name} does not exist."
+			
+		return document_type
 		
-
-
 
 
 # content_view_document_reference = db.reference("ContentViewDocument/")
