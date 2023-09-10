@@ -133,16 +133,16 @@ a = requests.delete(url)
 
 # do edit from prompt request
 import requests 
-url = 'http://118.138.33.86:8080/submit_prompt'
+url = 'http://118.139.76.46:8080/submit_prompt'
 chat_id = '19990454-c939-4e2d-87e6-22f245842191'
-prompt = 'please edit the helloworld document by adding a summary of the code-of-ethics'
+prompt = 'please edit the hello_world document by adding a summary of the code-of-ethics'
 source_doc1 = 'Code-of-Ethics' 
 central_doc1 = 'hello_world'
 
 payload_2 = {
     "chat_id": chat_id,
     "prompt": prompt,
-    "source_docs": [source_doc1, central_doc1]
+    "documents_list": [source_doc1, central_doc1]
 }
 
 y = requests.post(url, json = payload_2)

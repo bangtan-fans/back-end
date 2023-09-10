@@ -114,7 +114,7 @@ class OpenAIAPI():
         #Check if the delimeter: $!@Edited by GPT%@# is at the bottom of the response
         if self.check_delimeter(text = content):         
             #update the database, central_document.content with the new content! idk if we have this fucntion
-            Database.update_document(filename = central_document,new_content = content)
+            self.database.update_document(filename = central_document,new_content = content)
 
         return content
 
