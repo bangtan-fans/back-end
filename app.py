@@ -9,7 +9,7 @@ import os
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "https://main.d1weq6l2prlwb3.amplifyapp.com/"}})
+CORS(app, resources={r"/*": {"origins": "*"}})
 database = Database()
 openAIAPI= OpenAIAPI(database)
 
