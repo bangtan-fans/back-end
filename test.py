@@ -122,3 +122,7 @@ payload = {
 
 a = requests.post(url, json = payload)
 
+# test delete chat 
+
+url = 'http://118.139.76.46:8080/delete_chat_id/20fd9382-1108-4a4a-b08c-2db81b3e61bd'
+a = requests.delete(url)

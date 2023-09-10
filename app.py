@@ -33,6 +33,9 @@ def new_chat():
     database.add_new_chat(chat_id = new_chat_id)
     return jsonify({"new_chat_id": new_chat_id})
 
+@app.route('/delete_chat_id/<chat_id>', methods = ['DELETE'])
+def delete_chat_id(chat_id):
+    return database.delete_chat(chat_id)
 
 
 
