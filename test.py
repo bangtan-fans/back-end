@@ -85,3 +85,40 @@ a = requests.get(url)
 # delete document - 
 url = 'http://118.139.76.46:8080/delete_document/assignment_1'
 a = requests.delete(url)
+
+
+# test update doc (save button)
+import requests
+url = "http://118.139.76.46:8080/update_document"
+
+payload = {
+    'filename': 'Nyan_cat',
+    "content": "UPDATED CONTENT"
+}
+
+a = requests.post(url, json = payload)
+
+# add a source doc that expands on nyan cat 
+payload = {
+    "filename": "nyan_cat_info",
+    "content": "Nyan cat is pink. Alex likes nyan cat.",
+    "doc_type": "source_doc"
+}
+
+url = 'http://118.139.76.46:8080/add_document'
+
+x = requests.post(url, json = payload)
+
+
+# test submit prompt which will now be referencing source docs and central docs 
+import requests 
+url = "http://118.139.76.46:8080/submit_prompt"
+
+payload = {
+    'chat_id' : '20fd9382-1108-4a4a-b08c-2db81b3e61bd',
+    'prompt': 'Can you edit my central document to give more information about nyan cat?',
+    "documents_list": []
+}
+
+a = requests.post(url, json = payload)
+

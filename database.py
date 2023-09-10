@@ -142,11 +142,13 @@ class Database():
 				source_documents.append(files_reference[key])
 		return source_documents
 	
-	def update_document(self, filename, content):
+	def update_document(self, filename, new_content):
 		files_reference = self.document_reference.child(filename)
 		files_object = files_reference.get()
 		if not files_object is None:
-			pass
+			files_object["content"] = new_content
+		files_reference.set(files_object)
+		
 
 
 

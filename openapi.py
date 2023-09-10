@@ -27,42 +27,24 @@ class OpenAIAPI():
         openai.api_key = secret_key
         self.database = database
 
-    def append_source_docs_to_message(self, message, source_document_name):
-        for document_name in source_docs:
-            document_text = self.database.get_document(document_name)["content"]
-            message.append({
-                "role": "user",
-                "content": f"The following is a system message. The user has decided to include a source document for you to refer to in your response. The source document is called {document_name}. The text is the following : {document_text}"
-            })
-        return message
-
-    def append_content_doc_to_message(self, message, content_docs):
-        for document_name in content_docs:
-            document_text = self.database.get_source_document(document_name)["content"]
-
-            message.append({
-                "role": "user",
-                "content": f"The following is a system message. The content document the user is working on will be given further on, delimited by & characters. You may refer to the content document as needed to provide relevant suggestions and enhancements. If there are source documents in any previous message, you may refer to those as part of your response. This is the content document : & {document_text} &" 
-            })
-        return message
-
     def append_documents_to_message(self, message, documents_list):
         for document_name in documents_list:
             #check in the db if it's a central or source 
             document_type = self.database.check_document_type(document_name)
             if document_type == "source_doc":
-                document_text = self.database.get_source_document(document_name)["content"]
+                document_text = self.database.get_document(document_name)["content"]
                 message.append({
                     "role": "user",
-                    "content": f"The following is a system message. The user has decided to include a source document for you to refer to in your response. The source document is called {document_name}. The text is the following : {document_text}"
+                    "content": f"The following is a system message. The user has decided to include a source document for you to refer to in your response. These documents cannot be modified. The source document is called {document_name}. The text is the following : {document_text}"
                 })
             elif document_type == "central_doc":
-                document_text = self.database.get_source_document(document_name)["content"]
+                document_text = self.database.get_document(document_name)["content"]
 
                 message.append({
                     "role": "user",
-                    "content": f"The following is a system message. The central document the user is working on will be given further on, delimited by & characters. You may refer to the central document as needed to provide relevant suggestions and enhancements. If there are central documents in any previous message, you may refer to those as part of your response. This is the central document : & {document_text} &" 
+                    "content": f"The following is a system message. The central document the user is working on will be given further on, delimited by & characters. You may refer to the central document as needed to provide relevant suggestions and enhancements. The user may ask you to edit the central document directly. If there are central documents in any previous message, you may refer to those as part of your response. This is the central document : & {document_text} &" 
                 })
+        return message
 
 
         
@@ -84,8 +66,7 @@ class OpenAIAPI():
             })
 
 
-        self.append_documents_to_message(documents_list)
-        #self.append_source_docs_to_message(message, source_docs)
+        message = self.append_documents_to_message(message, documents_list)
         
         #we append our prompt to our previous chat (which is empty for an initial prompt)
         message.append(

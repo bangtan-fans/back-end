@@ -33,6 +33,9 @@ def new_chat():
     database.add_new_chat(chat_id = new_chat_id)
     return jsonify({"new_chat_id": new_chat_id})
 
+
+
+
 @app.route('/update_document', methods = ['POST'])
 def update_document():
     message_body = json.loads(request.data)
@@ -40,8 +43,8 @@ def update_document():
     filename = message_body["filename"]
     content = message_body["content"]
 
-    database.update_document(filename=filename, content=content)
-
+    database.update_document(filename=filename, new_content=content)
+    return "Success"
 
 
 
@@ -54,7 +57,7 @@ def submit_prompt():
 
     #check if source docs have been selected for this chat 
     documents_list = message_body["documents_list"]
-
+    
     response = openAIAPI.get_completion(chat_id=chat_id, prompt=prompt, documents_list = documents_list)
     return response
 
