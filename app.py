@@ -32,12 +32,22 @@ def new_chat():
     database.add_new_chat(chat_id = new_chat_id)
     return jsonify({"new_chat_id": new_chat_id})
 
+@app.route('/update_source_document', methods = ['POST'])
+def update_source_document():
+    message_body = json.loads(request.data)
+    # In production, refer to these with IDs instead.
+    filename = message_body["filename"]
+    content = message_body["content"]
+
+    database.update_source_document(filename=filename, content=content)
+
+
+
 @app.route('/add_source_document', methods = ['POST'])
 def add_source_document():
     message_body = json.loads(request.data)
     # Assume it's in the format of "filename": "name", "content": "text"
-    
-    database.add_source_document(filename=message_body["filename"], content=message_body["content"])
+    database.add_source_document(filename=message_body["filename"], content=message_body["content"], doc_type=message_body["doc_type"])
     return "Success"
 
     

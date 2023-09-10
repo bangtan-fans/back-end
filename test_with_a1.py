@@ -23,3 +23,10 @@ payload = {
 }
 res = requests.post(url + "submit_prompt", json = payload)
 
+
+######
+payload = {
+    "filename": "test",
+    "content": "This is a test file.",
+    "doc_type": "source_doc"
+}
