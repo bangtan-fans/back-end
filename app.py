@@ -70,7 +70,7 @@ def submit_prompt():
 def add_document():
     message_body = json.loads(request.data)
     # Assume it's in the format of "filename": "name", "content": "text"
-    database.add_document(filename=message_body["filename"], content=message_body["content"], doc_type=message_body["doc_type"])
+    database.add_document(filename=message_body["filename"][0:15], content=message_body["content"], doc_type=message_body["doc_type"])
     return "Success"
 
 @app.route('/get_document/<document_name>', methods=['GET'])
