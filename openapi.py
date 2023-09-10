@@ -50,8 +50,16 @@ class OpenAIAPI():
             document_text = self.database.get_source_document(document_name)
             message.append({
                 "role": "user",
-                "content": f"The following is a system message. The user has decided to include a document for you to refer to in your response. The document is called {document_name}. The text is the following: {document_text}"
+                "content": f"The following is a system message. The user has decided to include a source document for you to refer to in your response. The source document is called {document_name}. The source document contains the following text: {document_text}"
             })
+
+        
+        #we append this to emphasize importance.
+        message.append({
+            "role": "user",
+            "content": f"If necessary, refer to the source documents given when responding to the user."
+        })
+
         #we append our prompt to our previous chat (which is empty for an initial prompt)
         message.append(
             {
