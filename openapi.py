@@ -87,7 +87,6 @@ class OpenAIAPI():
         self.append_documents_to_message(documents_list)
         #self.append_source_docs_to_message(message, source_docs)
         
-
         #we append our prompt to our previous chat (which is empty for an initial prompt)
         message.append(
             {
