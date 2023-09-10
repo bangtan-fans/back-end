@@ -51,6 +51,7 @@ def submit_prompt():
     #check if source docs have been selected for this chat 
     source_docs_list = message_body["source_docs"]
 
+    print(message_body)
     response = openAIAPI.get_completion(chat_id=chat_id, prompt=prompt, source_docs = source_docs_list)
     return response
 
