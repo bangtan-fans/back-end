@@ -46,7 +46,16 @@ class OpenAIAPI():
                 })
         return message
 
+    def get_central_document(self, documents_list):
+        central_documents = []
+        for document_name in documents_list:
+            #check in the db if it's a central or source 
+            document_type = self.database.check_document_type(document_name)
 
+            if document_type == "central_doc":
+                central_documents.append(document_name)
+        
+        return central_documents
         
     def get_completion(self,chat_id, prompt, documents_list, model="gpt-3.5-turbo-16k-0613"):
 
@@ -100,12 +109,12 @@ class OpenAIAPI():
         #content only contains the string response from GPT3.5. 
         content = response.choices[0].message["content"]
 
+        central_document = self.get_central_document(documents_list=documents_list)[0]
+
         #Check if the delimeter: $!@Edited by GPT%@# is at the bottom of the response
         if self.check_delimeter(text = content):         
-            pass #update the database, central_document.content with the new content! idk if we have this fucntion
-
-        #if section_2 is empty, then it means chatGPT does not want to add 
-        #you could also
+            #update the database, central_document.content with the new content! idk if we have this fucntion
+            Database.update_document(filename = central_document,new_content = content)
 
         return content
 
