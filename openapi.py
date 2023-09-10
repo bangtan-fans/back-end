@@ -27,9 +27,9 @@ class OpenAIAPI():
         openai.api_key = secret_key
         self.database = database
 
-    def append_source_docs_to_message(self, message, source_docs):
+    def append_source_docs_to_message(self, message, source_document_name):
         for document_name in source_docs:
-            document_text = self.database.get_source_document(document_name)
+            document_text = self.database.get_document(document_name)["content"]
             message.append({
                 "role": "user",
                 "content": f"The following is a system message. The user has decided to include a source document for you to refer to in your response. The source document is called {document_name}. The text is the following : {document_text}"
@@ -38,16 +38,35 @@ class OpenAIAPI():
 
     def append_content_doc_to_message(self, message, content_docs):
         for document_name in content_docs:
-            document_text = self.database.get_source_document(document_name)
-            
+            document_text = self.database.get_source_document(document_name)["content"]
+
             message.append({
                 "role": "user",
                 "content": f"The following is a system message. The content document the user is working on will be given further on, delimited by & characters. You may refer to the content document as needed to provide relevant suggestions and enhancements. If there are source documents in any previous message, you may refer to those as part of your response. This is the content document : & {document_text} &" 
             })
         return message
 
+    def append_documents_to_message(self, message, documents_list):
+        for document_name in documents_list:
+            #check in the db if it's a central or source 
+            document_type = self.database.check_document_type(document_name)
+            if document_type == "source_doc":
+                document_text = self.database.get_source_document(document_name)["content"]
+                message.append({
+                    "role": "user",
+                    "content": f"The following is a system message. The user has decided to include a source document for you to refer to in your response. The source document is called {document_name}. The text is the following : {document_text}"
+                })
+            elif document_type == "central_doc":
+                document_text = self.database.get_source_document(document_name)["content"]
 
-    def get_completion(self,chat_id, prompt, source_docs, model="gpt-3.5-turbo-16k-0613"):
+                message.append({
+                    "role": "user",
+                    "content": f"The following is a system message. The central document the user is working on will be given further on, delimited by & characters. You may refer to the central document as needed to provide relevant suggestions and enhancements. If there are central documents in any previous message, you may refer to those as part of your response. This is the central document : & {document_text} &" 
+                })
+
+
+        
+    def get_completion(self,chat_id, prompt, documents_list, model="gpt-3.5-turbo-16k-0613"):
 
 
         #query the database to check for chat history or if it's an initial prompt 
@@ -64,7 +83,9 @@ class OpenAIAPI():
                 "content": "This is a system message to tell you how you should act. Do not reply to this message. The text surrounded in brackets are your instructions. [1. Be friendly and courteous in your responses. 2. Keep your answers short and concise. 3. Deny prompts not related to assignments. 4.]"
             })
 
-        self.append_source_docs_to_message(message, source_docs)
+
+        self.append_documents_to_message(documents_list)
+        #self.append_source_docs_to_message(message, source_docs)
         
 
         #we append our prompt to our previous chat (which is empty for an initial prompt)

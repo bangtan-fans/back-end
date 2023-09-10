@@ -117,14 +117,15 @@ class Database():
 				})
 		return chat_ids_and_names
 
-	def add_source_document(self, filename, content, doc_type):
-		source_document_object = {
+	def add_document(self, filename, content, doc_type):
+		document_object = {
 			"doc_type": doc_type,
-			"content": content
+			"content": content,
+			"filename": filename
 		}
-		self.document_reference.child(filename).set(source_document_object)
+		self.document_reference.child(filename).set(document_object)
 
-	def get_source_document(self, filename):
+	def get_document(self, filename):
 		file_reference = self.document_reference.child(filename)
 		source_document_text = ""
 		if not file_reference is None:
@@ -133,15 +134,15 @@ class Database():
 			source_document_text = f"ERROR: File {filename} does not exist."
 		return source_document_text
 	
-	def get_all_source_documents(self):
+	def get_all_documents(self):
 		files_reference = self.document_reference.get()
-		source_documents = {}
+		source_documents = []
 		if not files_reference is None:
 			for key in files_reference:
-				source_documents[key] = files_reference[key]
+				source_documents.append(files_reference[key])
 		return source_documents
 	
-	def update_source_document(self, filename, content):
+	def update_document(self, filename, content):
 		files_reference = self.document_reference.child(filename)
 		files_object = files_reference.get()
 		if not files_object is None:
@@ -175,7 +176,7 @@ class Database():
 			success = True
 		return success
 
-	def delete_source_document(self, document_name):
+	def delete_document(self, document_name):
 		self.reinitialise_reference()
 		document_id_reference = self.document_reference.child(document_name)
 		success = False
@@ -184,11 +185,16 @@ class Database():
 			success = True
 		return success
 	
-
-
+	def check_document_type(self, document_name):
+		document_object = self.document_reference.child(document_name).get()
+		document_type = ""
+		if not document_object is None:
+			document_type = document_object.get("doc_type")
+		else:
+			document_type = f"ERROR: File {document_name} does not exist."
+			
+		return document_type
 		
-
-
 
 
 # content_view_document_reference = db.reference("ContentViewDocument/")

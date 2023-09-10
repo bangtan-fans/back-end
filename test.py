@@ -42,3 +42,46 @@ payload_4 = {
 z = requests.delete(url, json = payload_4)
 
 url = "http://118.139.76.46:8080/add_source_document"
+
+
+##################### TEST SUITE 2 - 10/09/2023 - 12:38pm ####################
+
+# add source document 
+
+chat_id = "f52ec616-7695-4cf1-a052-aea581d74212"
+
+payload = {
+    "filename": "assignment_1",
+    "content": "Alex likes cats.",
+    "doc_type": "source_doc"
+}
+
+url = 'http://118.139.76.46:8080/add_document'
+
+x = requests.post(url, json = payload)
+
+# add central document 
+
+payload = {
+    "filename": "Nyan_cat",
+    "content": "Nyan Cat is a cat.",
+    "doc_type": "central_doc"
+}
+
+url = 'http://118.139.76.46:8080/add_document'
+x = requests.post(url, json = payload)
+
+
+# get document (testing Nyan_cat doc we just uploaded above)
+
+url = 'http://118.139.76.46:8080/get_document/Nyan_cat'
+a = requests.get(url)
+
+# get all documents 
+
+url = 'http://118.139.76.46:8080/get_all_documents'
+a = requests.get(url)
+
+# delete document - 
+url = 'http://118.139.76.46:8080/delete_document/assignment_1'
+a = requests.delete(url)
