@@ -57,6 +57,7 @@ class OpenAIAPI():
         # Update the database with our prompt.
         self.database.update_chat(chat_id, str(datetime.datetime.now()), "user", prompt)
 
+        # If previous chat history was empty
         if len(message) == 0:
             # Prompt eNgiNeErIng
             # Here, we will set instructions.
@@ -65,10 +66,10 @@ class OpenAIAPI():
                 "content": "This is a system message to tell you how you should act. Do not reply to this message. The text surrounded in brackets are your instructions. [1. Be friendly and courteous in your responses. 2. Keep your answers short and concise. 3. Deny prompts not related to assignments. 4.]"
             })
 
-
+        # Add our source and/or our central documents into our openAI api prompt 
         message = self.append_documents_to_message(message, documents_list)
         
-        #we append our prompt to our previous chat (which is empty for an initial prompt)
+        #we append our actual prompt to our previous chat (which is empty for an initial prompt) as well as the source documents and central documents which we appended above
         message.append(
             {
                 "role": "user",
@@ -76,6 +77,14 @@ class OpenAIAPI():
             }
         )
     
+        message.append(
+            {
+                "role": "user",
+                "content" : "The following message is a system message.  Determine if  \"user message\" is requesting changes to central_document and if it is, then respond with only the edited text and add this delimiter $!@Edited by GPT%@# at the very end of the response. If the user has not requested for central_document to be edited, then respond normally and do not include the delimiter in your response."
+            }
+        )
+
+
         #Using this message we send our api request 
         response = openai.ChatCompletion.create(
             model = model,
@@ -84,15 +93,28 @@ class OpenAIAPI():
         )
 
 
-        #update the databse with our response
+
+        #update the database with our response 
         self.database.update_chat(chat_id, str(datetime.datetime.now()), "system", response.choices[0].message["content"])
 
-        return response.choices[0].message["content"]
+        #content only contains the string response from GPT3.5. 
+        content = response.choices[0].message["content"]
+
+        #Check if the delimeter: $!@Edited by GPT%@# is at the bottom of the response
+        if self.check_delimeter(text = content):         
+            pass #update the database, central_document.content with the new content! idk if we have this fucntion
+
+        #if section_2 is empty, then it means chatGPT does not want to add 
+        #you could also
+
+        return content
 
         # Get the previous messages for this specific chatID.
 
 
-
+    def check_delimeter(self, text):
+        delimeter = "$!@Edited by GPT%@#"
+        return text.endswith(delimeter)
 
 
 
