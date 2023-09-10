@@ -6,9 +6,10 @@ from openapi import OpenAIAPI
 from database import Database
 import uuid
 import os
-
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "https://main.d1weq6l2prlwb3.amplifyapp.com/"}})
 database = Database()
 openAIAPI= OpenAIAPI(database)
 
