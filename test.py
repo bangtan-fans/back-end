@@ -126,3 +126,23 @@ a = requests.post(url, json = payload)
 
 url = 'http://118.139.76.46:8080/delete_chat_id/20fd9382-1108-4a4a-b08c-2db81b3e61bd'
 a = requests.delete(url)
+
+############ TEST EDIT FROM PROMPT #############
+
+
+
+# do edit from prompt request
+import requests 
+url = 'http://118.138.33.86:8080/submit_prompt'
+chat_id = '19990454-c939-4e2d-87e6-22f245842191'
+prompt = 'please edit the helloworld document by adding a summary of the code-of-ethics'
+source_doc1 = 'Code-of-Ethics' 
+central_doc1 = 'hello_world'
+
+payload_2 = {
+    "chat_id": chat_id,
+    "prompt": prompt,
+    "source_docs": [source_doc1, central_doc1]
+}
+
+y = requests.post(url, json = payload_2)
