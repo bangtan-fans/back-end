@@ -146,3 +146,5 @@ payload_2 = {
 }
 
 y = requests.post(url, json = payload_2)
+
+# try it with prompt "tell me what's inside source_doc1" don't edit any central doc stuff

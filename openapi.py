@@ -46,7 +46,7 @@ class OpenAIAPI():
                 })
         return message
 
-    def get_central_document(self, documents_list):
+    def get_central_document_name(self, documents_list):
         central_documents = []
         for document_name in documents_list:
             #check in the db if it's a central or source 
@@ -89,7 +89,7 @@ class OpenAIAPI():
         message.append(
             {
                 "role": "user",
-                "content" : "The following message is a system message.  Determine if  \"user message\" is requesting changes to central_document and if it is, then respond with only the edited text and add this delimiter $!@Edited by GPT%@# at the very end of the response. If the user has not requested for central_document to be edited, then respond normally and do not include the delimiter in your response."
+                "content" : "The following message is a system message.  Determine if  \"user message\" is requesting changes to central_document and if it is, then respond with only the edited text and add the delimiter $!@Edited by GPT%@# at the very start and the very end of the generated edited text. No other text except the edited text should be inside the delimeter. If the user has not requested for central_document to be edited, then respond normally and do not include the delimiter in your response."
             }
         )
 
@@ -109,17 +109,32 @@ class OpenAIAPI():
         #content only contains the string response from GPT3.5. 
         content = response.choices[0].message["content"]
 
-        central_document = self.get_central_document(documents_list=documents_list)[0]
+        central_document_name = self.get_central_document_name(documents_list=documents_list)[0]
+
+        
 
         #Check if the delimeter: $!@Edited by GPT%@# is at the bottom of the response
-        if self.check_delimeter(text = content):         
+        if self.check_delimeter(text = content):        
+            edited_text = self.get_edited_text_only(text = content) 
             #update the database, central_document.content with the new content! idk if we have this fucntion
-            self.database.update_document(filename = central_document,new_content = content)
+            self.database.update_document(filename = central_document_name,new_content = edited_text)
 
         return content
 
         # Get the previous messages for this specific chatID.
 
+    def get_edited_text_only(self, text):
+        delimiter = "$!@Edited by GPT%@#"
+        
+        # Splitting the string based on the delimiter
+        parts = s.split(delimiter)
+        
+        # If there are at least 3 parts, then the desired text is the second part
+        if len(parts) >= 3:
+            return parts[1].strip()
+        else:
+            return None
+        
 
     def check_delimeter(self, text):
         delimeter = "$!@Edited by GPT%@#"
