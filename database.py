@@ -5,40 +5,6 @@ import os
 from dotenv import load_dotenv
 
 
-	# cred = credentials.Certificate('llmnotebook-macathon1-firebase-adminsdk-1137j-c4ecc4a9ef.json')
-	# firebase_admin.initialize_app(cred, {'databaseURL': 'https://llmnotebook-macathon1-default-rtdb.asia-southeast1.firebasedatabase.app/'})
-# ref = db.reference('Books/')        
-# ref.set({
-# 	"Book1":
-# 	{
-# 		"Title": "The Fellowship of the Ring",
-# 		"Author": "J.R.R. Tolkien",
-# 		"Genre": "Epic fantasy",
-# 		"Price": 100
-# 	},
-# 	"Book2":
-# 	{
-# 		"Title": "The Two Towers",
-# 		"Author": "J.R.R. Tolkien",
-# 		"Genre": "Epic fantasy",
-# 		"Price": 100	
-# 	},
-# 	"Book3":
-# 	{
-# 		"Title": "The Return of the King",
-# 		"Author": "J.R.R. Tolkien",
-# 		"Genre": "Epic fantasy",
-# 		"Price": 100
-# 	},
-# 	"Book4":
-# 	{
-# 		"Title": "Brida",
-# 		"Author": "Paulo Coelho",
-# 		"Genre": "Fiction",
-# 		"Price": 100
-# 	}
-# })
-
 		
 class Database():
 	def __init__(self):
@@ -99,8 +65,20 @@ class Database():
 			"chat_history": None,
 			"source_docs": {}
 		})
+		chat_metadata_object = self.chat_metadata.get()
 
-		self.chat_metadata.child(chat_id).set("Untitled")
+		chat_names_list = []
+		if not chat_metadata_object is None:
+			chat_names_list = [chat_metadata_object[key] for key in chat_metadata_object]
+			print("CHAT NAMES LIST", chat_names_list)
+			# Find the latest chat number.
+			chat_names_number_list = [int(name.split()[1]) for name in  chat_names_list]
+			max_number = max(chat_names_number_list) + 1
+		else:
+			max_number = 1
+
+
+		self.chat_metadata.child(chat_id).set("Chat " + str(max_number))
 
 	def get_all_ids(self):
 		'''
