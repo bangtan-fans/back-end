@@ -43,14 +43,7 @@ def update_source_document():
 
 
 
-@app.route('/add_source_document', methods = ['POST'])
-def add_source_document():
-    message_body = json.loads(request.data)
-    # Assume it's in the format of "filename": "name", "content": "text"
-    database.add_source_document(filename=message_body["filename"], content=message_body["content"], doc_type=message_body["doc_type"])
-    return "Success"
 
-    
 
 @app.route('/submit_prompt', methods=['POST'])
 def submit_prompt():
@@ -64,6 +57,15 @@ def submit_prompt():
     response = openAIAPI.get_completion(chat_id=chat_id, prompt=prompt, source_docs = source_docs_list)
     return response
 
+# Source Documents
+
+@app.route('/add_source_document', methods = ['POST'])
+def add_source_document():
+    message_body = json.loads(request.data)
+    # Assume it's in the format of "filename": "name", "content": "text"
+    database.add_source_document(filename=message_body["filename"], content=message_body["content"], doc_type=message_body["doc_type"])
+    return "Success"
+
 @app.route('/get_source_document/<source_document_name>', methods=['GET'])
 def get_source_document(source_document_name):
     """This takes a source document name and returns the content related to that that name.
@@ -74,16 +76,8 @@ def get_source_document(source_document_name):
 
 @app.route('/get_all_source_documents', methods = ['GET'])
 def get_all_source_documents():
-    
-    #get a list of all the source document names 
-    list_source_documents = database.get_all_source_documents()
+    return jsonify(database.get_all_source_documents())
 
-    return jsonify(list_source_documents)
-
-@app.route('/delete_chat_id/<chat_id>', methods = ['DELETE'])
-def delete_chat_id(chat_id):
-    result = database.delete_chat(chat_id)
-    return jsonify(result)
 
 @app.route('/delete_source_document/<source_document_name>', methods = ['DELETE'])
 def delete_source_document(source_document_name):

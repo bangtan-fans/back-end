@@ -53,7 +53,7 @@ class Database():
 		# All References / Directories
 		self.llm_conversation_reference = db.reference('LLMConversation/')
 		self.chat_metadata = db.reference("ChatMetadata/")
-		self.source_document_reference = db.reference('SourceDocuments/')	
+		self.document_reference = db.reference('Documents/')	
 
 	def get_previous_chat(self, chat_id):
 
@@ -122,26 +122,27 @@ class Database():
 			"doc_type": doc_type,
 			"content": content
 		}
-		self.source_document_reference.child(filename).set(source_document_object)
+		self.document_reference.child(filename).set(source_document_object)
 
 	def get_source_document(self, filename):
-		file_reference = self.source_document_reference.child(filename)
+		file_reference = self.document_reference.child(filename)
 		source_document_text = ""
 		if not file_reference is None:
-			source_document_text = file_reference.get()["content"]
+			source_document_text = file_reference.get()
 		else:
 			source_document_text = f"ERROR: File {filename} does not exist."
 		return source_document_text
 	
 	def get_all_source_documents(self):
-		files_reference = self.source_document_reference.get()
-		source_documents = []
+		files_reference = self.document_reference.get()
+		source_documents = {}
 		if not files_reference is None:
-			source_documents = [key for key in files_reference]
+			for key in files_reference:
+				source_documents[key] = files_reference[key]
 		return source_documents
 	
 	def update_source_document(self, filename, content):
-		files_reference = self.source_document_reference.child(filename)
+		files_reference = self.document_reference.child(filename)
 		files_object = files_reference.get()
 		if not files_object is None:
 			pass
@@ -176,7 +177,7 @@ class Database():
 
 	def delete_source_document(self, document_name):
 		self.reinitialise_reference()
-		document_id_reference = self.source_document_reference.child(document_name)
+		document_id_reference = self.document_reference.child(document_name)
 		success = False
 		if not document_id_reference.get() is None:
 			document_id_reference.delete()

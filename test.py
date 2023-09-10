@@ -1,12 +1,13 @@
 import requests
 
-url = 'http://118.138.33.86:8080/add_source_document'
+url = 'http://118.139.76.46:8080/add_source_document'
 
 chat_id = "ed8729d8-92cd-4b17-af7d-5d14b623f4cf"
 
 payload_1 = {
     "filename": "assignment_1",
-    "content": "Alex likes cats."
+    "content": "Alex likes cats.",
+    "doc_type": "source_doc"
 }
 
 
@@ -39,3 +40,5 @@ payload_4 = {
 }
 
 z = requests.delete(url, json = payload_4)
+
+url = "http://118.139.76.46:8080/add_source_document"

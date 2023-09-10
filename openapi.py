@@ -38,7 +38,8 @@ class OpenAIAPI():
 
     def append_content_doc_to_message(self, message, content_docs):
         for document_name in content_docs:
-            document_text = "GET CONTENT DOCUMENT"
+            document_text = self.database.get_source_document(document_name)
+            
             message.append({
                 "role": "user",
                 "content": f"The following is a system message. The content document the user is working on will be given further on, delimited by & characters. You may refer to the content document as needed to provide relevant suggestions and enhancements. If there are source documents in any previous message, you may refer to those as part of your response. This is the content document : & {document_text} &" 
@@ -63,7 +64,7 @@ class OpenAIAPI():
                 "content": "This is a system message to tell you how you should act. Do not reply to this message. The text surrounded in brackets are your instructions. [1. Be friendly and courteous in your responses. 2. Keep your answers short and concise. 3. Deny prompts not related to assignments. 4.]"
             })
 
-
+        self.append_source_docs_to_message(message, source_docs)
         
 
         #we append our prompt to our previous chat (which is empty for an initial prompt)
